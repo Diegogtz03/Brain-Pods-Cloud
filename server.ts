@@ -8,27 +8,13 @@ const port = 8080;
 
 let clients: { roomId: string; ws: WebSocket }[] = [];
 
-// const wss = new WebSocketServer({
-//   port: parseInt(process.env.WS_PORT || "8080"),
-// });
-
 app.ws("/", (ws, req) => {
-  ws.on("connection", (ctx, req) => {
-    clients.push({ roomId: req.url.split("/")[1], ws: ctx });
-  });
+  clients.push({ roomId: req.url.split("/.websocket?roomId=")[1], ws: ws });
 
   ws.on("close", (ctx, req) => {
     clients = clients.filter((client) => client.ws !== ctx);
   });
 });
-
-// wss.on("connection", (ctx, req) => {
-//   clients.push({ roomId: req.url.split("/")[1], ws: ctx });
-// });
-
-// wss.on("close", (ctx, req) => {
-//   clients = clients.filter((client) => client.ws !== ctx);
-// });
 
 app.get("/", (req, res) => {
   res.send("Hello");
@@ -52,13 +38,13 @@ app.post("/start", (req, res) => {
 });
 
 app.get("/open/:roomId", (req, res) => {
+  console.log("connectione");
   // connect to websocket
-  const ws = new WebSocket(
-    `ws://brain-pods-cloud-508208716471.us-central1.run.app/${req.params.roomId}`
-  );
+  const ws = new WebSocket(`ws://localhost:8081/?roomId=${req.params.roomId}`);
 
   ws.onopen = () => {
     res.send("Connected");
+    ws.send(JSON.stringify({ message: "Hello from client" }));
   };
 
   ws.onerror = (err) => {
