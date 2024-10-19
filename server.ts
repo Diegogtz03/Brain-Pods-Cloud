@@ -2,7 +2,7 @@ import express from "express";
 import { WebSocketServer } from "ws";
 
 const app = express();
-const port = 8081;
+const port = 8080;
 
 let clients: { roomId: string; ws: WebSocket }[] = [];
 
