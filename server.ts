@@ -18,6 +18,10 @@ wss.on("close", (ctx, req) => {
   clients = clients.filter((client) => client.ws !== ctx);
 });
 
+app.get("/", (req, res) => {
+  res.send("Hello");
+});
+
 app.get("/talk/:roomId", (req, res) => {
   // send message to all websocket with roomId
   clients
