@@ -7,7 +7,7 @@ const port = 8080;
 let clients: { roomId: string; ws: WebSocket }[] = [];
 
 const wss = new WebSocketServer({
-  port: parseInt(process.env.WS_PORT || "3100"),
+  port: parseInt(process.env.WS_PORT || "8080"),
 });
 
 wss.on("connection", (ctx, req) => {
@@ -39,12 +39,20 @@ app.post("/start", (req, res) => {
   res.send(req.body.roomId);
 });
 
-// app.get("/open/:roomId", (req, res) => {
-//   // connect to websocket
-//   const ws = new WebSocket(
-//     `ws://localhost:${process.env.WS_PORT}/${req.params.roomId}`
-//   );
-// });
+app.get("/open/:roomId", (req, res) => {
+  // connect to websocket
+  const ws = new WebSocket(
+    `ws://brain-pods-cloud-508208716471.us-central1.run.app:${process.env.WS_PORT}/${req.params.roomId}`
+  );
+
+  ws.onopen = () => {
+    res.send("Connected");
+  };
+
+  ws.onerror = (err) => {
+    res.send("Error: " + err);
+  };
+});
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
