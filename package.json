@@ -1,14 +1,22 @@
 {
-  "name": "brain-pods-cloud",
+  "name": "brain-pods",
+  "description": "Brain-Pods",
   "version": "1.0.0",
-  "description": "Brain Pods Cloud Server",
+  "private": true,
   "main": "server.ts",
+  "type": "module",
   "scripts": {
     "start": "bun server.ts"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "author": "Google LLC",
+  "license": "Apache-2.0",
   "dependencies": {
-    "@types/node": "^22.7.7",
-    "express": "^4.18.2",
-    "ws": "^8.14.2"
+    "bun": "^1.1.23",
+    "express": "^4.21.1",
+    "ws": "^8.18.0",
+    "typescript": "^4.2.4"
   }
 }
