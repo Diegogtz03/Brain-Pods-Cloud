@@ -27,6 +27,8 @@ app.get("/talk/:roomId", (req, res) => {
         JSON.stringify({ message: "Whats up? roomId: " + req.params.roomId })
       );
     });
+
+  res.send("Message sent");
 });
 
 app.post("/start", (req, res) => {
