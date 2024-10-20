@@ -4,6 +4,7 @@ import expressWs from "express-ws";
 import cors from "cors";
 
 const app = express();
+app.use(express.json());
 var expressWs = require("express-ws")(app);
 const port = 8081;
 
@@ -15,8 +16,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-app.use(express.json());
 
 let clients: { podId: string; ws: WebSocket }[] = [];
 
