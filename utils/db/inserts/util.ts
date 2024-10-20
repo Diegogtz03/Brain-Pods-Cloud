@@ -7,11 +7,12 @@ export const insertQuestion = async (
   podId: string
 ) => {
   const { data, error } = await supabase
-    .from("questions")
+    .from("pod_question")
     .insert({ question, pod_id: podId, index: correct_index, answers })
     .select();
 
   if (error) {
+    console.log(error);
     throw new Error(error.message);
   }
 
