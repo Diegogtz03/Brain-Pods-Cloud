@@ -1,10 +1,20 @@
 import express from "express";
 import { WebSocketServer } from "ws";
 import expressWs from "express-ws";
+import cors from "cors";
 
 const app = express();
 var expressWs = require("express-ws")(app);
 const port = 8080;
+
+// Configure CORS
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://localhost:8080", "*"],
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 let clients: { podId: string; ws: WebSocket }[] = [];
 
