@@ -18,15 +18,19 @@ export const generateQuestion = async (podId: string): Promise<Question> => {
   // Get context on pod
   // --> Tags
   const tags = await getTags(podId);
+  console.log("TAGS", tags);
 
   // --> Previous Questions
   const previousQuestions = await getQuestions(podId);
+  console.log("PREVIOUS QUESTIONS", previousQuestions);
 
   // --> Chat Messages?
   const chatMessages = await getPublicPodChatMessages(podId);
+  console.log("CHAT MESSAGES", chatMessages);
 
   // --> Document Embeddings
   const documentEmbeddings = await getDocumentEmbeddings(podId);
+  console.log("DOCUMENT EMBEDDINGS", documentEmbeddings);
 
   // Call Gemini
   const gemini = new GoogleGenerativeAI(API_KEY ?? "");

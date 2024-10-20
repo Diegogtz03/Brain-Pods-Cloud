@@ -59,16 +59,38 @@ app.post("/start", async (req, res) => {
     },
   });
 
-  // timeout 1:30 minutes
-  setTimeout(() => {
+  const startTime = Date.now();
+  const timeoutDuration = 20000; // 20 seconds
+  let allAnswersReceived = false;
+
+  while (Date.now() - startTime < timeoutDuration && !allAnswersReceived) {
+    const answers = await getAnswers(podId, questionId);
+
+    if (
+      answers &&
+      answers.length >= 2 &&
+      answers.every((answer) => answer.correct !== null)
+    ) {
+      allAnswersReceived = true;
+    } else {
+      // Wait for a short interval before checking again
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+  }
+
+  if (allAnswersReceived) {
+    console.log("All answers received");
     sendMessageToPods(podId, {
       type: "close",
       data: {},
     });
-  }, 20000);
-
-  // Sleep 20 seconds
-  await new Promise((resolve) => setTimeout(resolve, 20000));
+  } else {
+    console.log("Timeout reached");
+    sendMessageToPods(podId, {
+      type: "close",
+      data: {},
+    });
+  }
 
   // analyze responses
   const answers = await getAnswers(podId, questionId);
