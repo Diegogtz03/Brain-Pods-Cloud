@@ -27,3 +27,22 @@ export const getPublicPodChatMessages = async (podId: string) => {
 
   return data;
 };
+
+export const getDocumentEmbeddings = async (podId: string) => {
+  const { data, error } = await supabase
+    .from("pod_document_embedding")
+    .select("embedding")
+    .eq("pod_id", podId);
+
+  return data;
+};
+
+export const getAnswers = async (podId: string, questionId: string) => {
+  const { data, error } = await supabase
+    .from("pod_question_answer")
+    .select("answer_index, user_id, correct, question_id")
+    .eq("pod_id", podId)
+    .eq("question_id", questionId);
+
+  return data;
+};

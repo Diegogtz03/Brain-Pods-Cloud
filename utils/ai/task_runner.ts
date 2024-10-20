@@ -2,9 +2,14 @@ import {
   getTags,
   getQuestions,
   getPublicPodChatMessages,
+  getDocumentEmbeddings,
+  getAnswers,
 } from "../db/selects/util";
-import { Question } from "../../interfaces/ai";
-import { QUESTION_GENERATION_PROMPT } from "../promt_repo";
+import { Question, FeedbackResponse } from "../../interfaces/ai";
+import {
+  FEEDBACK_GENERATOR_PROMPT,
+  QUESTION_GENERATION_PROMPT,
+} from "../promt_repo";
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
 export const generateQuestion = async (podId: string): Promise<Question> => {
@@ -21,8 +26,7 @@ export const generateQuestion = async (podId: string): Promise<Question> => {
   const chatMessages = await getPublicPodChatMessages(podId);
 
   // --> Document Embeddings
-  const documentEmbeddings =
-    "Hi! I need to generate a study guide for goemtry, I'm in 7th grade. I want to learn about the pythagorean theorem. My study includes the following topics: pythagorean theorem, distance formula, and slope.";
+  const documentEmbeddings = await getDocumentEmbeddings(podId);
 
   // Call Gemini
   const gemini = new GoogleGenerativeAI(API_KEY ?? "");
@@ -31,7 +35,7 @@ export const generateQuestion = async (podId: string): Promise<Question> => {
     tags?.join(", ") ?? "",
     previousQuestions?.join(", ") ?? "",
     chatMessages?.join(", ") ?? "",
-    documentEmbeddings ?? ""
+    documentEmbeddings?.join(", ") ?? ""
   );
 
   const responseSchema = {
@@ -75,6 +79,69 @@ export const generateQuestion = async (podId: string): Promise<Question> => {
   const result = await model.generateContent(finalPrompt);
 
   // Validate if can be parsed into Question
+  const parsedResponse = JSON.parse(result.response.text());
+
+  return parsedResponse;
+};
+
+//   tags: string,
+// chatMessages: string,
+// userInstructions: string
+
+export const generateFeedback = async (
+  podId: string,
+  questionId: string,
+  question: string,
+  answerChoices: string[]
+): Promise<FeedbackResponse> => {
+  const API_KEY = process.env.GEMINI_API_KEY;
+
+  // get wrong answers
+  const answers = await getAnswers(podId, questionId);
+
+  // --> Tags
+  const tags = await getTags(podId);
+
+  // --> Previous Questions
+  const previousQuestions = await getQuestions(podId);
+
+  // --> Chat Messages
+  const chatMessages = await getPublicPodChatMessages(podId);
+
+  // generate feedback (can be multiple feedbacks if wrong answers are related)
+  const finalPrompt = FEEDBACK_GENERATOR_PROMPT(
+    question,
+    answerChoices.join(", "),
+    answers?.join(", ") ?? "",
+    tags?.join(", ") ?? "",
+    chatMessages?.join(", ") ?? "",
+    previousQuestions?.join(", ") ?? ""
+  );
+
+  // return feedback;
+  const gemini = new GoogleGenerativeAI(API_KEY ?? "");
+
+  const responseSchema = {
+    description: "Feedback",
+    type: SchemaType.OBJECT,
+    properties: {
+      feedbacks: {
+        type: SchemaType.ARRAY,
+        items: { type: SchemaType.STRING },
+      },
+    },
+  };
+
+  const model = gemini.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema,
+    },
+  });
+
+  const result = await model.generateContent(finalPrompt);
+
   const parsedResponse = JSON.parse(result.response.text());
 
   return parsedResponse;

@@ -6,3 +6,7 @@ export interface Question {
     is_correct: boolean;
   }[];
 }
+
+export interface FeedbackResponse {
+  feedbacks: string[];
+}

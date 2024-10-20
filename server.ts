@@ -3,9 +3,10 @@ import { WebSocketServer } from "ws";
 import expressWs from "express-ws";
 import cors from "cors";
 
-import { generateQuestion } from "./utils/ai/task_runner";
-import { Question } from "./interfaces/ai";
+import { generateFeedback, generateQuestion } from "./utils/ai/task_runner";
+import { Question, FeedbackResponse } from "./interfaces/ai";
 import { insertQuestion } from "./utils/db/inserts/util";
+import { getAnswers } from "./utils/db/selects/util";
 const app = express();
 app.use(express.json());
 var expressWs = require("express-ws")(app);
@@ -41,7 +42,7 @@ app.post("/start", async (req, res) => {
   const question: Question = await generateQuestion(podId);
 
   // Register question on db
-  await insertQuestion(
+  const questionId = await insertQuestion(
     question.question,
     question.correct_index,
     question.answers,
@@ -51,24 +52,54 @@ app.post("/start", async (req, res) => {
   // Send question to pod via websockets
   sendMessageToPods(podId, {
     type: "open",
-    data: { question: question.question, answers: question.answers },
+    data: {
+      question: question.question,
+      answers: question.answers,
+      id: questionId,
+    },
   });
 
   // timeout 1:30 minutes
-  // Send end websocket message to client (3s trial)
   setTimeout(() => {
     sendMessageToPods(podId, {
       type: "close",
       data: {},
     });
-  }, 10000);
+  }, 20000);
 
   // analyze responses
+  const answers = await getAnswers(podId, questionId);
 
-  // If bad answers give feedback through chat (loop?)
+  // If all answers are correct, send next question, else generate feedback and send it as chat
+  if (answers?.every((answer) => answer.correct)) {
+    console.log("All answers are correct");
+  } else {
+    const feedbacks: FeedbackResponse = await generateFeedback(
+      podId,
+      questionId,
+      question.question,
+      question.answers.map((answer) => answer.answer)
+    );
 
-  // Repeat
-  res.send("Started");
+    for (const feedback of feedbacks.feedbacks) {
+      setTimeout(() => {
+        sendMessageToPods(podId, {
+          type: "chat",
+          data: { feedback },
+        });
+      }, 1000);
+    }
+  }
+
+  // End chat
+  setTimeout(() => {
+    sendMessageToPods(podId, {
+      type: "close",
+      data: {},
+    });
+  }, 1000);
+
+  res.send("Completed");
 });
 
 app.listen(port, () => {

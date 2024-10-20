@@ -6,20 +6,15 @@ export const insertQuestion = async (
   answers: { answer: string; is_correct: boolean }[],
   podId: string
 ) => {
-  // {
-  //   question: <question>,
-  //   correct_index: <index>,
-  //   answer: [
-  //     {
-  //       answer: <answer>,
-  //       is_correct: <true/false>
-  //     }
-  //   ]
-  // }
-
-  // Get
-
   const { data, error } = await supabase
     .from("questions")
-    .insert({ question, pod_id: podId });
+    .insert({ question, pod_id: podId, index: correct_index, answers })
+    .select("id")
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data.id;
 };
