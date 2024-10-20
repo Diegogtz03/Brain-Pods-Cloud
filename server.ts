@@ -5,7 +5,7 @@ import cors from "cors";
 
 import { generateFeedback, generateQuestion } from "./utils/ai/task_runner";
 import { Question, FeedbackResponse } from "./interfaces/ai";
-import { insertQuestion } from "./utils/db/inserts/util";
+import { insertQuestion, insertChatMessage } from "./utils/db/inserts/util";
 import { getAnswers } from "./utils/db/selects/util";
 const app = express();
 app.use(express.json());
@@ -85,11 +85,16 @@ app.post("/start", async (req, res) => {
     );
 
     for (const feedback of feedbacks.feedbacks) {
-      setTimeout(() => {
-        sendMessageToPods(podId, {
-          type: "chat",
-          data: { feedback },
-        });
+      // setTimeout(() => {
+      //   sendMessageToPods(podId, {
+      //     type: "chat",
+      //     data: { feedback },
+      //   });
+      // }, 1000);
+
+      // Insert to chat_message table
+      setTimeout(async () => {
+        await insertChatMessage(podId, feedback);
       }, 1000);
     }
   }

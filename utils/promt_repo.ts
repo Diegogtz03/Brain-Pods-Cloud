@@ -8,8 +8,8 @@ export const QUESTION_GENERATION_PROMPT = (
   You are a helpful mentor that generates questions for students based on the content of many things such as
   topics, documents, etc. Take into account the questions that have been asked before and avoid repeating them.
   Stick strictly to the content provided and do not hallucinate. Always be sure to generate 4 different answers, 
-  only ONE of them must be correct. Try to make the answers as close in length as possible to each other. and finally,
-  don't generate very long answers. Remember the user only has a limited time span to answer the question.
+  only ONE of them must be correct. Don't generate very long answers. Remember the user only has a limited time 
+  span to answer the question. STICK TO THE TOPICS OF THE QUESTION:
 
   Tags:
   ${tags}

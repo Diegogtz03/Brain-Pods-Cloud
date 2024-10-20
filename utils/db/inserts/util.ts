@@ -18,3 +18,20 @@ export const insertQuestion = async (
 
   return data[0].id;
 };
+
+export const insertChatMessage = async (podId: string, message: string) => {
+  const { data, error } = await supabase.from("chat_message").insert({
+    pod_id: podId,
+    role: "AI",
+    is_private: false,
+    content: message,
+    user_name: "AI",
+  });
+
+  if (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+
+  return data;
+};
