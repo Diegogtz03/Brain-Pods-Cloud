@@ -32,7 +32,7 @@ export const getDocumentEmbeddings = async (podId: string) => {
   const { data, error } = await supabase
     .from("pod")
     .select("embedding")
-    .eq("pod_id", podId);
+    .eq("id", podId);
 
   return data;
 };
