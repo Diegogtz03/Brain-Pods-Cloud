@@ -15,6 +15,8 @@ import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 export const generateQuestion = async (podId: string): Promise<Question> => {
   const API_KEY = process.env.GEMINI_API_KEY;
 
+  console.log("POD ID", podId);
+
   // Get context on pod
   // --> Tags
   const tags = await getTags(podId);

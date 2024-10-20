@@ -30,7 +30,7 @@ export const getPublicPodChatMessages = async (podId: string) => {
 
 export const getDocumentEmbeddings = async (podId: string) => {
   const { data, error } = await supabase
-    .from("pod_document_embedding")
+    .from("pod")
     .select("embedding")
     .eq("pod_id", podId);
 
