@@ -32,10 +32,7 @@ app.ws("/", (ws, req) => {
 });
 
 app.post("/start", (req, res) => {
-  // console.log(req.body);
-  let podId = JSON.parse(req.body).podId;
-
-  // console.log(podId);
+  let podId = req.body.podId;
 
   // Get context on pod (embeddings)
 
@@ -70,7 +67,7 @@ app.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
 
-function sendMessageToPods(podId: string, data: any) {
+function sendMessageToPods(podId: string, data: object) {
   clients
     .filter((client) => client.podId === podId)
     .forEach((client) => {
