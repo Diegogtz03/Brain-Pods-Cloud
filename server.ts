@@ -5,7 +5,7 @@ import cors from "cors";
 
 const app = express();
 var expressWs = require("express-ws")(app);
-const port = 8080;
+const port = 8081;
 
 // Configure CORS
 app.use(
@@ -15,6 +15,8 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+app.use(express.json());
 
 let clients: { podId: string; ws: WebSocket }[] = [];
 
@@ -31,7 +33,10 @@ app.ws("/", (ws, req) => {
 });
 
 app.post("/start", (req, res) => {
+  // console.log(req.body);
   let podId = JSON.parse(req.body).podId;
+
+  // console.log(podId);
 
   // Get context on pod (embeddings)
 
