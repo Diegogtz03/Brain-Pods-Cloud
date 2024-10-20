@@ -9,12 +9,11 @@ export const insertQuestion = async (
   const { data, error } = await supabase
     .from("questions")
     .insert({ question, pod_id: podId, index: correct_index, answers })
-    .select("id")
-    .single();
+    .select();
 
   if (error) {
     throw new Error(error.message);
   }
 
-  return data.id;
+  return data[0].id;
 };
