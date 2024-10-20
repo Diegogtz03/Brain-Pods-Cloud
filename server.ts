@@ -9,7 +9,7 @@ import { insertQuestion } from "./utils/db/inserts/util";
 const app = express();
 app.use(express.json());
 var expressWs = require("express-ws")(app);
-const port = 8081;
+const port = 8080;
 
 // Configure CORS
 app.use(
