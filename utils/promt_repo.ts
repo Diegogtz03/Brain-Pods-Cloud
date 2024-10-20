@@ -9,7 +9,7 @@ export const QUESTION_GENERATION_PROMPT = (
   topics, documents, etc. Take into account the questions that have been asked before and avoid repeating them.
   Stick strictly to the content provided and do not hallucinate. Always be sure to generate 4 different answers, 
   only ONE of them must be correct. Don't generate very long answers. Remember the user only has a limited time 
-  span to answer the question. STICK TO THE TOPICS OF THE QUESTION:
+  span to answer the question. STICK TO THE TAGS OF THE QUESTION, DO NOT ASK ABOUT ANY OTHER TOPICS, KNOWN AS TAGS:
 
   Tags:
   ${tags}

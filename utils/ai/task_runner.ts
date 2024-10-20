@@ -38,10 +38,10 @@ export const generateQuestion = async (podId: string): Promise<Question> => {
   const gemini = new GoogleGenerativeAI(API_KEY ?? "");
 
   const finalPrompt = QUESTION_GENERATION_PROMPT(
-    tags?.join(", ") ?? "",
-    previousQuestions?.join(", ") ?? "",
-    chatMessages?.join(", ") ?? "",
-    documentEmbeddings?.join(", ") ?? ""
+    tags?.map((tag) => tag.topic_name).join("/ ") ?? "",
+    previousQuestions?.map((question) => question.question).join("/ ") ?? "",
+    chatMessages?.join("/ ") ?? "",
+    documentEmbeddings?.map((embedding) => embedding.embedding).join("/ ") ?? ""
   );
 
   const responseSchema = {
