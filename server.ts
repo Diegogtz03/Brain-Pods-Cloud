@@ -15,9 +15,14 @@ const port = 8080;
 // Configure CORS
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:8080", "*"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:8080",
+      "*",
+      "https://brain-pods.com/*",
+    ],
     methods: ["GET", "POST", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "*"],
   })
 );
 
