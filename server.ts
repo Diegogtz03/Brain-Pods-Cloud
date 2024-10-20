@@ -31,7 +31,7 @@ app.ws("/", (ws, req) => {
 });
 
 app.post("/start", (req, res) => {
-  let podId = req.body.podId;
+  let podId = JSON.parse(req.body).podId;
 
   // Get context on pod (embeddings)
 
