@@ -24,6 +24,7 @@ export const insertChatMessage = async (podId: string, message: string) => {
     pod_id: podId,
     role: "AI",
     is_private: false,
+    user_id: null,
     content: message,
     user_name: "AI",
   });
