@@ -3,10 +3,13 @@ import { WebSocketServer } from "ws";
 import expressWs from "express-ws";
 import cors from "cors";
 
+import { generateQuestion } from "./utils/ai/task_runner";
+import { Question } from "./interfaces/ai";
+import { insertQuestion } from "./utils/db/inserts/util";
 const app = express();
 app.use(express.json());
 var expressWs = require("express-ws")(app);
-const port = 8080;
+const port = 8081;
 
 // Configure CORS
 app.use(
@@ -31,19 +34,24 @@ app.ws("/", (ws, req) => {
   });
 });
 
-app.post("/start", (req, res) => {
+app.post("/start", async (req, res) => {
   let podId = req.body.podId;
 
-  // Get context on pod (embeddings)
-
-  // Generate question for pod
+  // Generate question for pod (AI)
+  const question: Question = await generateQuestion(podId);
 
   // Register question on db
+  await insertQuestion(
+    question.question,
+    question.correct_index,
+    question.answers,
+    podId
+  );
 
   // Send question to pod via websockets
   sendMessageToPods(podId, {
     type: "open",
-    data: { question: "Whats up?" },
+    data: { question: question.question, answers: question.answers },
   });
 
   // timeout 1:30 minutes
@@ -53,7 +61,7 @@ app.post("/start", (req, res) => {
       type: "close",
       data: {},
     });
-  }, 3000);
+  }, 10000);
 
   // analyze responses
 
