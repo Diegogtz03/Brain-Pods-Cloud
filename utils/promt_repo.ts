@@ -37,6 +37,7 @@ export const QUESTION_GENERATION_PROMPT = (
   }
 
   You must return the response in JSON format like the example above.
+  MAKE SURE TO RANDOMIZE THE CORRECT ANSWER INDEX AND PLACE THE CORRECT ANSWER IN THAT INDEX.
 `;
 
 export const FEEDBACK_GENERATOR_PROMPT = (
