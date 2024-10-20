@@ -67,6 +67,9 @@ app.post("/start", async (req, res) => {
     });
   }, 20000);
 
+  // Sleep 20 seconds
+  await new Promise((resolve) => setTimeout(resolve, 20000));
+
   // analyze responses
   const answers = await getAnswers(podId, questionId);
 
